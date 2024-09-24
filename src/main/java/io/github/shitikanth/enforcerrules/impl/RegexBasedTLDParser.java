@@ -1,4 +1,4 @@
-package com.github.shitikanth.enforcerrules.impl;
+package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.AbstractTLDParser;
 import com.google.common.annotations.VisibleForTesting;
 
 class RegexBasedTLDParser extends AbstractTLDParser {

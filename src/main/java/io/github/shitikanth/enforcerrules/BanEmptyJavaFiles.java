@@ -1,4 +1,4 @@
-package com.github.shitikanth.enforcerrules;
+package io.github.shitikanth.enforcerrules;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -17,7 +17,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.github.shitikanth.enforcerrules.impl.TLDParserFactories;
+import io.github.shitikanth.enforcerrules.impl.TLDParserFactories;
 import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.execution.MavenSession;

@@ -21,7 +21,7 @@ This plugin adds an enforcer rule to detect and ban such files.
   <version>3.5.0</version>
   <dependencies>
     <dependency>
-      <groupId>com.github.shitikanth</groupId>
+      <groupId>io.github.shitikanth</groupId>
       <artifactId>enforcer-rules</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>

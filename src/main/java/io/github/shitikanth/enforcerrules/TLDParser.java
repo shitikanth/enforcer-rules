@@ -1,4 +1,4 @@
-package com.github.shitikanth.enforcerrules;
+package io.github.shitikanth.enforcerrules;
 
 import java.util.List;
 
