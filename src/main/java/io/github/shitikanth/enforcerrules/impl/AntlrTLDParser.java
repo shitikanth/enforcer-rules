@@ -1,4 +1,4 @@
-package com.github.shitikanth.enforcerrules.impl;
+package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,9 +6,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.List;
 
-import com.github.shitikanth.enforcerrules.AbstractTLDParser;
-import com.github.shitikanth.enforcerrules.JavaTLDLexer;
-import com.github.shitikanth.enforcerrules.JavaTLDParser;
+import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.JavaTLDLexer;
+import io.github.shitikanth.enforcerrules.JavaTLDParser;
 import com.google.common.annotations.VisibleForTesting;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

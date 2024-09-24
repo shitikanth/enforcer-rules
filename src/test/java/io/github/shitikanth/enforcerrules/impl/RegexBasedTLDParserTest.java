@@ -1,4 +1,4 @@
-package com.github.shitikanth.enforcerrules.impl;
+package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

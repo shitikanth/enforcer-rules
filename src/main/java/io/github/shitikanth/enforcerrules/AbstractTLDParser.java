@@ -1,4 +1,4 @@
-package com.github.shitikanth.enforcerrules;
+package io.github.shitikanth.enforcerrules;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

@@ -1,4 +1,4 @@
-package com.github.shitikanth.enforcerrules.impl;
+package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaParserAdapter;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.AbstractTLDParser;
 
 class JavaParserTLDParser extends AbstractTLDParser {
     private final JavaParserAdapter parser;

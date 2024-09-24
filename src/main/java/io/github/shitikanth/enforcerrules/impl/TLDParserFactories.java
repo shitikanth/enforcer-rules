@@ -1,13 +1,12 @@
-package com.github.shitikanth.enforcerrules.impl;
+package io.github.shitikanth.enforcerrules.impl;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
-import com.github.shitikanth.enforcerrules.TLDParser;
-import com.github.shitikanth.enforcerrules.TLDParserFactory;
+import io.github.shitikanth.enforcerrules.TLDParser;
+import io.github.shitikanth.enforcerrules.TLDParserFactory;
 
 public class TLDParserFactories {
     static String DEFAULT = "default";

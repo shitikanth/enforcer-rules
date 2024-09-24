@@ -1,11 +1,11 @@
-package com.github.shitikanth.enforcerrules.impl;
+package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.github.shitikanth.enforcerrules.TLDParser;
+import io.github.shitikanth.enforcerrules.TLDParser;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
