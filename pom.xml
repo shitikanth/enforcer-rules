@@ -28,7 +28,7 @@
 
   <scm>
     <connection>scm:git:https://github.com/shitikanth/enforcer-rules.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:shitikanth/enforcer-rules.git</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com/shitikanth/enforcer-rules.git</developerConnection>
     <tag>HEAD</tag>
     <url>https://github.com/shitikanth/enforcer-rules/tree/main</url>
   </scm>
