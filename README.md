@@ -1,5 +1,5 @@
-[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/shitikanth/enforcer-rules.svg?label=License)](http://www.apache.org/licenses/) [![Github CI](https://github.com/shitikanth/enforcer-rules/actions/workflows/maven.yml/badge.svg)](https://github.com/mojohaus/extra-enforcer-rules/actions/workflows/maven.yml)
-
+[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/shitikanth/enforcer-rules.svg?label=License)](http://www.apache.org/licenses/) [![Github CI](https://github.com/shitikanth/enforcer-rules/actions/workflows/ci.yml/badge.svg)](https://github.com/mojohaus/extra-enforcer-rules/actions/workflows/ci.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.shitikanth/enforcer-rules.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.shitikanth/enforcer-rules)
 # Motivation
 
 ## Ban Empty Java Files
