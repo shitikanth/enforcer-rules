@@ -28,14 +28,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-        server-id: 'ossrh'
+        server-id: 'central'
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
     - name: Build with Maven
-      run: ./mvnw -V -B deploy
+      run: ./mvnw -V -B deploy -Dgpg.signer=bc
       env:
         MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
