@@ -6,17 +6,59 @@
 
   <groupId>io.github.shitikanth</groupId>
   <artifactId>enforcer-rules</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <description>Maven Enforcer Rule to ban empty java source files</description>
+  <url>https://github.com/shitikanth/enforcer-rules</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Shitikanth Kashyap</name>
+      <email>shitikanth1@gmail.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/shitikanth/enforcer-rules.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/shitikanth/enforcer-rules.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://github.com/shitikanth/enforcer-rules/tree/main</url>
+  </scm>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mavenVersion>3.8.1</mavenVersion>
+    <!-- plugin versions -->
+    <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
     <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
-    <javaparser-core.version>3.25.3</javaparser-core.version>
+    <maven-gpg-plugin.version>3.2.6</maven-gpg-plugin.version>
+    <maven-install-plugin.version>3.1.3</maven-install-plugin.version>
     <maven-invoker-plugin.version>3.8.0</maven-invoker-plugin.version>
+    <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+    <maven-javadoc-plugin.version>3.8.0</maven-javadoc-plugin.version>
+    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <maven-site-plugin.version>3.20.0</maven-site-plugin.version>
+    <maven-source-plugin.version>2.4</maven-source-plugin.version>
+    <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+    <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
+
+    <!-- Dependency versions -->
     <antlr4.version>4.13.0</antlr4.version>
+    <javaparser-core.version>3.25.3</javaparser-core.version>
+    <junit-jupiter.version>5.11.0</junit-jupiter.version>
+    <logback-classic.version>1.5.7</logback-classic.version>
   </properties>
 
   <dependencies>
@@ -46,23 +88,91 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.11.0</version>
+      <version>${junit-jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.7</version>
+      <version>${logback-classic.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${maven-enforcer-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven-install-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven-resources-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>${maven-site-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${central-publishing-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.3.0</version>
         <executions>
           <execution>
             <id>enforce-maven-version</id>
@@ -131,6 +241,57 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
-
 </project>
