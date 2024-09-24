@@ -6,7 +6,7 @@
 
   <groupId>io.github.shitikanth</groupId>
   <artifactId>enforcer-rules</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
   <description>Maven Enforcer Rule to ban empty java source files</description>
   <url>https://github.com/shitikanth/enforcer-rules</url>
