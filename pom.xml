@@ -242,10 +242,7 @@
       </build>
     </profile>
     <profile>
-      <id>deploy</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
+      <id>release</id>
       <build>
         <plugins>
           <plugin>

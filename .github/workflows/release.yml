@@ -21,7 +21,7 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Perform Release
-        run: ./mvnw -B -Dgpg.signer=bc release:prepare release:perform
+        run: ./mvnw -B -Prelease -Dgpg.signer=bc release:prepare release:perform
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
