@@ -4,7 +4,7 @@
 
   <groupId>io.github.shitikanth</groupId>
   <artifactId>enforcer-rules</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
 
   <description>Maven Enforcer Rule to ban empty java source files</description>
   <url>https://github.com/shitikanth/enforcer-rules</url>
@@ -27,7 +27,7 @@
   <scm>
     <connection>scm:git:https://github.com/shitikanth/enforcer-rules.git</connection>
     <developerConnection>scm:git:https://github.com/shitikanth/enforcer-rules.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>enforcer-rules-1.0.1</tag>
     <url>https://github.com/shitikanth/enforcer-rules/tree/main</url>
   </scm>
 
