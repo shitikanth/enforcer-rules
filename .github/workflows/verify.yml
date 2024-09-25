@@ -10,3 +10,8 @@ jobs:
   build:
     name: Verify
     uses: apache/maven-gh-actions-shared/.github/workflows/maven-verify.yml@v4
+    with:
+      ff-site-run: false
+      os-matrix: '[ "ubuntu-latest" ]'
+      jdk-matrix: '[ "11", "17", "21" ]'
+      jdk-distribution-matrix: '[ "temurin" ]'
