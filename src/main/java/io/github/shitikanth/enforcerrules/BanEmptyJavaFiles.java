@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -87,29 +88,29 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
             }
             try {
                 var sourceFiles = Files.find(sourceRoot, Integer.MAX_VALUE, (path, attr) -> attr.isRegularFile() && path.toFile().getName().endsWith(".java"))
-                    .toList();
+                    .collect(Collectors.toList());
                 long startTime = System.currentTimeMillis();
                 LOGGER.info("Analyzing {} files", sourceFiles.size());
                 executor = Executors.newFixedThreadPool(4);
-                List<Future<AnalysisResult>> futureList = executor.invokeAll(sourceFiles.stream().map(
+                executor.invokeAll(sourceFiles.stream().map(
                     path -> (Callable<AnalysisResult>) () -> {
                         boolean isEmpty = analyzer.isEmptyJavaFile(path);
                         return new AnalysisResult(path, isEmpty);
-                    }).toList());
-                futureList.forEach(result -> {
-                    if (result.isDone()) {
-                        try {
-                            var analysisResult = result.get();
-                            if (analysisResult.isEmpty()) {
-                                emptyJavaSourceFiles.add(analysisResult.path());
+                    }).collect(Collectors.toList()))
+                    .forEach(result -> {
+                        if (result.isDone()) {
+                            try {
+                                var analysisResult = result.get();
+                                if (analysisResult.isEmpty()) {
+                                    emptyJavaSourceFiles.add(analysisResult.path());
+                                }
+                            } catch (ExecutionException e) {
+                                LOGGER.error("Task encountered exception: ", e.getCause());
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
                             }
-                        } catch (ExecutionException e) {
-                            LOGGER.error("Task encountered exception: ", e.getCause());
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
                         }
-                    }
-                });
+                    });
                 long endTime = System.currentTimeMillis();
                 LOGGER.info("Finished in {}ms", endTime - startTime);
             } catch (IOException e) {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.github.shitikanth.enforcerrules.AbstractTLDParser;
 import io.github.shitikanth.enforcerrules.JavaTLDLexer;
@@ -38,6 +39,6 @@ class AntlrTLDParser extends AbstractTLDParser {
         var compilationUnit = parser.compilationUnit();
         return compilationUnit.typeDeclaration().stream()
                 .map(typeDeclaration -> typeDeclaration.ID().toString())
-                .toList();
+                .collect(Collectors.toList());
     }
 }
