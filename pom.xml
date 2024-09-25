@@ -32,8 +32,8 @@
   </scm>
 
   <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mavenVersion>3.8.1</mavenVersion>
     <!-- plugin versions -->
@@ -50,6 +50,7 @@
     <maven-site-plugin.version>3.20.0</maven-site-plugin.version>
     <maven-source-plugin.version>2.4</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+    <sisu-maven-plugin.version>0.9.0.M3</sisu-maven-plugin.version>
     <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
 
     <!-- Dependency versions -->
@@ -194,6 +195,19 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>sisu-maven-plugin</artifactId>
+        <version>${sisu-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>generate-index</id>
+            <goals>
+              <goal>main-index</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -210,6 +224,7 @@
             <artifactId>maven-invoker-plugin</artifactId>
             <version>${maven-invoker-plugin.version}</version>
             <configuration>
+              <debug>true</debug>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <showErrors>true</showErrors>
               <settingsFile>src/it/settings.xml</settingsFile>
