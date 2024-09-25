@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -49,10 +50,11 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
     void shutdownExecutor() {
         if (executor != null) {
             for (Runnable task : this.executor.shutdownNow()) {
-                if (task instanceof Future<?> future) {
+                if (task instanceof Future<?>) {
+                    Future<?> future = (Future<?>) task;
                     future.cancel(true);
                 }
-            };
+            }
         }
     }
 
@@ -61,8 +63,16 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
         MavenProject project = session.getCurrentProject();
         int threads = session.getRequest().getDegreeOfConcurrency();
         LOGGER.info("threads: {}", threads);
-        List<Path> compileSourceRoots = project.getCompileSourceRoots().stream().map(Paths::get).toList();
-        List<Path> testCompileSourceRoots = project.getTestCompileSourceRoots().stream().map(Paths::get).toList();
+        List<Path> compileSourceRoots = new ArrayList<>();
+        List<Path> testCompileSourceRoots = new ArrayList<>();
+        for (String s : project.getCompileSourceRoots()) {
+            Path path = Paths.get(s);
+            compileSourceRoots.add(path);
+        }
+        for (String s : project.getTestCompileSourceRoots()) {
+            Path path = Paths.get(s);
+            testCompileSourceRoots.add(path);
+        }
         analyzeSourceRoots(compileSourceRoots);
         analyzeSourceRoots(testCompileSourceRoots);
     }
@@ -119,8 +129,41 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
         }
     }
 
-    record AnalysisResult(
-        Path path,
-        boolean isEmpty
-    ) {}
+    static final class AnalysisResult {
+        private final Path path;
+        private final boolean isEmpty;
+
+        AnalysisResult(
+            Path path,
+            boolean isEmpty
+        ) {
+            this.path = path;
+            this.isEmpty = isEmpty;
+        }
+
+        public Path path() {return path;}
+
+        public boolean isEmpty() {return isEmpty;}
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (AnalysisResult) obj;
+            return Objects.equals(this.path, that.path) &&
+                this.isEmpty == that.isEmpty;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(path, isEmpty);
+        }
+
+        @Override
+        public String toString() {
+            return "AnalysisResult[" +
+                "path=" + path + ", " +
+                "isEmpty=" + isEmpty + ']';
+        }
+    }
 }
