@@ -57,7 +57,7 @@
     <antlr4.version>4.13.0</antlr4.version>
     <javaparser-core.version>3.25.3</javaparser-core.version>
     <junit-jupiter.version>5.11.0</junit-jupiter.version>
-    <logback-classic.version>1.5.7</logback-classic.version>
+    <logback-classic.version>1.5.8</logback-classic.version>
   </properties>
 
   <dependencies>
