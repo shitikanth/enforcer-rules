@@ -54,7 +54,7 @@
     <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
 
     <!-- Dependency versions -->
-    <antlr4.version>4.13.0</antlr4.version>
+    <antlr4.version>4.13.2</antlr4.version>
     <javaparser-core.version>3.25.3</javaparser-core.version>
     <junit-jupiter.version>5.11.0</junit-jupiter.version>
     <logback-classic.version>1.5.7</logback-classic.version>
