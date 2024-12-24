@@ -92,7 +92,15 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
                 long startTime = System.currentTimeMillis();
                 LOGGER.info("Analyzing {} files", sourceFiles.size());
                 executor = Executors.newFixedThreadPool(4);
-                executor.invokeAll(sourceFiles.stream().map(
+                executor.invokeAll(sourceFiles.stream()
+                    .filter(path -> {
+                        String fileName = null;
+                        if (path.getFileName() != null) {
+                            fileName = path.getFileName().toString();
+                        }
+                        return fileName != null && !fileName.equals("package-info.java") && !fileName.equals("module-info.java");
+                    })
+                    .map(
                     path -> (Callable<AnalysisResult>) () -> {
                         boolean isEmpty = analyzer.isEmptyJavaFile(path);
                         return new AnalysisResult(path, isEmpty);
