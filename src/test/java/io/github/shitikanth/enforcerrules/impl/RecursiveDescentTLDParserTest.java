@@ -26,7 +26,7 @@ class RecursiveDescentTLDParserTest {
     @Test
     @Disabled
     void debugFile() {
-        String filename = "";
+        String filename = "/Users/shitikanth/Documents/beeworks-in/bee_recon/recon-platform/parser/src/main/java/com/ascent/recon/parser/ej/CommonHelper.java";
         Path path = Paths.get(filename);
         var types = new RecursiveDescentTLDParser(path).parse();
         System.out.println(types);
