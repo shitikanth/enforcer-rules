@@ -6,6 +6,7 @@
   <artifactId>enforcer-rules</artifactId>
   <version>1.0.3-SNAPSHOT</version>
 
+  <name>Enforcer Rules</name>
   <description>Maven Enforcer Rule to ban empty java source files</description>
   <url>https://github.com/shitikanth/enforcer-rules</url>
 
