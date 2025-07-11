@@ -30,3 +30,8 @@ interface Example7 {
 
     }
 }
+
+class Example8 {
+    char c1 = '"';
+    char c2 = '\'';
+}

@@ -23,7 +23,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
     private State state;
     private int start=0;
     private int pos=0;
-    private List<String> collector = new ArrayList<>();
+    private final List<String> collector = new ArrayList<>();
 
     public RecursiveDescentTLDParser(Path path) {
         super(path);
@@ -126,7 +126,6 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
     private void skipWord() {
         Pattern pattern = Pattern.compile("\\w\\b");
         Matcher matcher = pattern.matcher(input);
-        int cur = pos;
         matcher.region(pos, input.length());
         if (matcher.find(pos)) {
             pos = matcher.end();
@@ -230,6 +229,35 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
 
     }
 
+
+    class InsideCharacterLiteralState implements State {
+        private final State parent;
+
+        public InsideCharacterLiteralState(State parent) {
+            this.parent = parent;
+        }
+
+        @Nullable
+        @Override
+        public State runState() {
+            LOGGER.debug("{}\tinside character literal: {}", pos, input.substring(pos, Math.min(pos + 10, input.length())));
+            boolean escaped = false;
+            while(!eof()) {
+                char c = peek();
+                next();
+                if (c == '\'' && !escaped) {
+                    break;
+                }
+                if (c == '\\') {
+                    escaped = !escaped;
+                } else {
+                    escaped = false;
+                }
+            }
+            return parent;
+        }
+    }
+
     class LineCommentState implements State {
         private final State parent;
 
@@ -309,6 +337,8 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
                 }
                 else if (lookingAt("/*")) {
                     return new BlockCommentState(this);
+                } else if (lookingAt("'")) {
+                    return new InsideCharacterLiteralState(this);
                 }
                 c = peek();
                 if (c == startMarker) {
