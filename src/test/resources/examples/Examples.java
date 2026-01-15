@@ -35,3 +35,7 @@ class Example8 {
     char c1 = '"';
     char c2 = '\'';
 }
+
+class Example9 {
+    byte[] bytes = new byte[] {'0', '0'};
+}
