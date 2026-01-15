@@ -344,7 +344,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
                 if (c == startMarker) {
                     depth++;
                 }
-                if (c == endMarker && cur() != '\'') {
+                if (c == endMarker) {
                     depth--;
                     if (depth == 0) {
                         next();
