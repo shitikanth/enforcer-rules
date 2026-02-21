@@ -7,12 +7,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.github.shitikanth.enforcerrules.AbstractTLDParser;
-import io.github.shitikanth.enforcerrules.JavaTLDLexer;
-import io.github.shitikanth.enforcerrules.JavaTLDParser;
 import com.google.common.annotations.VisibleForTesting;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+
+import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.JavaTLDLexer;
+import io.github.shitikanth.enforcerrules.JavaTLDParser;
 
 class AntlrTLDParser extends AbstractTLDParser {
     public AntlrTLDParser(Path path) {

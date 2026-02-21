@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.shitikanth.enforcerrules.AbstractTLDParser;
 import com.google.common.annotations.VisibleForTesting;
 
+import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+
 class RegexBasedTLDParser extends AbstractTLDParser {
-    private Pattern pattern = Pattern.compile("^((public|protected|private|static|abstract|final|sealed|non_sealed)\\s+)*(class|interface|@interface|enum|record)\\s+(\\w+)");
+    private Pattern pattern = Pattern.compile(
+            "^((public|protected|private|static|abstract|final|sealed|non_sealed)\\s+)*(class|interface|@interface|enum|record)\\s+(\\w+)");
 
     public RegexBasedTLDParser(Path path) {
         super(path);
@@ -25,7 +27,7 @@ class RegexBasedTLDParser extends AbstractTLDParser {
 
     @Override
     public List<String> parse() {
-        try(var bufferedReader = getReader()) {
+        try (var bufferedReader = getReader()) {
             return parse(bufferedReader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -44,6 +46,4 @@ class RegexBasedTLDParser extends AbstractTLDParser {
         });
         return types;
     }
-
-
 }

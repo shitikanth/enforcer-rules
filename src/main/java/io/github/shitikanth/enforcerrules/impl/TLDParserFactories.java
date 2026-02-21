@@ -5,19 +5,21 @@ import java.util.Map;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
+
 import io.github.shitikanth.enforcerrules.TLDParser;
 import io.github.shitikanth.enforcerrules.TLDParserFactory;
 
 public class TLDParserFactories {
     static String DEFAULT = "default";
     static Map<String, TLDParserFactory> factories = Map.of(
-        DEFAULT, TLDParserFactories::recursiveDescentParser,
-        "java-parser", TLDParserFactories::javaParser,
-        "regex", TLDParserFactories::regexBasedParser
-    );
+            DEFAULT,
+            TLDParserFactories::recursiveDescentParser,
+            "java-parser",
+            TLDParserFactories::javaParser,
+            "regex",
+            TLDParserFactories::regexBasedParser);
 
-    private TLDParserFactories() {
-    }
+    private TLDParserFactories() {}
 
     public static TLDParserFactory getParserFactory(String parserId) {
         if (parserId == null) {

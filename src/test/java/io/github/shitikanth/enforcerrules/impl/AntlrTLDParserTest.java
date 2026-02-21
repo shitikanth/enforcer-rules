@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import io.github.shitikanth.enforcerrules.TLDParser;
 import org.junit.jupiter.api.Test;
+
+import io.github.shitikanth.enforcerrules.TLDParser;
+
 import static org.junit.jupiter.api.Assertions.fail;
 
 class AntlrTLDParserTest {
@@ -20,6 +22,5 @@ class AntlrTLDParserTest {
         TLDParser parser = new AntlrTLDParser(new BufferedReader(new InputStreamReader(inputStream)));
         var types = parser.parse();
         System.out.println(types);
-
     }
 }

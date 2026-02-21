@@ -11,18 +11,18 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
-import io.github.shitikanth.enforcerrules.AbstractTLDParser;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.shitikanth.enforcerrules.AbstractTLDParser;
 
 class RecursiveDescentTLDParser extends AbstractTLDParser {
     static final Logger LOGGER = LoggerFactory.getLogger(RecursiveDescentTLDParser.class);
     private String input;
     private State state;
-    private int start=0;
-    private int pos=0;
+    private int start = 0;
+    private int pos = 0;
     private final List<String> collector = new ArrayList<>();
 
     public RecursiveDescentTLDParser(Path path) {
@@ -60,7 +60,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
     }
 
     private char cur() {
-        return input.charAt(pos-1);
+        return input.charAt(pos - 1);
     }
 
     private char peek() {
@@ -97,7 +97,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
     }
 
     private void skipWs() {
-        while(!eof() && Character.isWhitespace(peek())) {
+        while (!eof() && Character.isWhitespace(peek())) {
             next();
         }
         skip();
@@ -143,30 +143,23 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
         @Override
         public State runState() {
             Pattern classKeyword = Pattern.compile("(class|record|@?interface|enum)\\b");
-            while(!eof()) {
+            while (!eof()) {
                 skipWs();
                 if (lookingAt("\"\"\"")) {
                     return new InsideTextState(this);
-                }
-                else if (lookingAt("\"")) {
+                } else if (lookingAt("\"")) {
                     return new InsideStringState(this);
-                }
-                else if (lookingAt("(")) {
+                } else if (lookingAt("(")) {
                     return new SkipParentheticalBlockState(this, '(', ')');
-                }
-                else if (lookingAt("//")) {
+                } else if (lookingAt("//")) {
                     return new LineCommentState(this);
-                }
-                else if (lookingAt("/*")) {
+                } else if (lookingAt("/*")) {
                     return new BlockCommentState(this);
-                }
-                else if (lookingAt("package") || lookingAt("import")) {
+                } else if (lookingAt("package") || lookingAt("import")) {
                     return new PackageOrImportState();
-                }
-                else if (lookingAt(classKeyword)) {
+                } else if (lookingAt(classKeyword)) {
                     return new TypeDeclarationState();
-                }
-                else {
+                } else {
                     skipWord();
                 }
             }
@@ -212,7 +205,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
         public State runState() {
             LOGGER.debug("{}\tinside string: {}", pos, input.substring(pos, Math.min(pos + 10, input.length())));
             boolean escaped = false;
-            while(!eof()) {
+            while (!eof()) {
                 char c = peek();
                 next();
                 if (c == '\"' && !escaped) {
@@ -226,9 +219,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
             }
             return parent;
         }
-
     }
-
 
     class InsideCharacterLiteralState implements State {
         private final State parent;
@@ -240,9 +231,10 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
         @Nullable
         @Override
         public State runState() {
-            LOGGER.debug("{}\tinside character literal: {}", pos, input.substring(pos, Math.min(pos + 10, input.length())));
+            LOGGER.debug(
+                    "{}\tinside character literal: {}", pos, input.substring(pos, Math.min(pos + 10, input.length())));
             boolean escaped = false;
-            while(!eof()) {
+            while (!eof()) {
                 char c = peek();
                 next();
                 if (c == '\'' && !escaped) {
@@ -324,18 +316,16 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
         @Override
         public State runState() {
             char c;
-            while(!eof()) {
+            while (!eof()) {
                 skipWs();
                 if (lookingAt("\"\"\"")) {
                     return new InsideTextState(this);
-                }
-                else if (lookingAt("\"")) {
+                } else if (lookingAt("\"")) {
                     return new InsideStringState(this);
                 }
                 if (lookingAt("//")) {
                     return new LineCommentState(this);
-                }
-                else if (lookingAt("/*")) {
+                } else if (lookingAt("/*")) {
                     return new BlockCommentState(this);
                 } else if (lookingAt("'")) {
                     return new InsideCharacterLiteralState(this);
@@ -356,5 +346,4 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
             throw new RuntimeException("Failed to parse: " + getPath());
         }
     }
-
 }

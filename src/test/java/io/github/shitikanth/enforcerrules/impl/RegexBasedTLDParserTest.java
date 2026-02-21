@@ -6,13 +6,13 @@ import java.io.InputStreamReader;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegexBasedTLDParserTest {
 
     @BeforeEach
-    void setUp() {
-    }
+    void setUp() {}
 
     @Test
     void example() {
