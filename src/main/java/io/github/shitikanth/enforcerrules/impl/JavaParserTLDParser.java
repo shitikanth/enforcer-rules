@@ -11,6 +11,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaParserAdapter;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
+
 import io.github.shitikanth.enforcerrules.AbstractTLDParser;
 
 class JavaParserTLDParser extends AbstractTLDParser {
@@ -22,7 +23,7 @@ class JavaParserTLDParser extends AbstractTLDParser {
     }
 
     @Override
-    public List<String> parse()  {
+    public List<String> parse() {
         CompilationUnit compilationUnit = null;
         try (BufferedReader reader = this.getReader()) {
             compilationUnit = parser.parse(reader);

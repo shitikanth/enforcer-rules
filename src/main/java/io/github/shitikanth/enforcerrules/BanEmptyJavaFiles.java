@@ -19,7 +19,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.github.shitikanth.enforcerrules.impl.TLDParserFactories;
 import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.execution.MavenSession;
@@ -27,10 +26,11 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Named("banEmptyJavaFiles")
-class BanEmptyJavaFiles extends AbstractEnforcerRule  {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BanEmptyJavaFiles.class);
+import io.github.shitikanth.enforcerrules.impl.TLDParserFactories;
 
+@Named("banEmptyJavaFiles")
+class BanEmptyJavaFiles extends AbstractEnforcerRule {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BanEmptyJavaFiles.class);
 
     private final MavenSession session;
 
@@ -87,38 +87,44 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
                 continue;
             }
             try {
-                var sourceFiles = Files.find(sourceRoot, Integer.MAX_VALUE, (path, attr) -> attr.isRegularFile() && path.toFile().getName().endsWith(".java"))
-                    .collect(Collectors.toList());
+                var sourceFiles = Files.find(
+                                sourceRoot,
+                                Integer.MAX_VALUE,
+                                (path, attr) -> attr.isRegularFile()
+                                        && path.toFile().getName().endsWith(".java"))
+                        .collect(Collectors.toList());
                 long startTime = System.currentTimeMillis();
                 LOGGER.info("Analyzing {} files", sourceFiles.size());
                 executor = Executors.newFixedThreadPool(4);
                 executor.invokeAll(sourceFiles.stream()
-                    .filter(path -> {
-                        String fileName = null;
-                        if (path.getFileName() != null) {
-                            fileName = path.getFileName().toString();
-                        }
-                        return fileName != null && !fileName.equals("package-info.java") && !fileName.equals("module-info.java");
-                    })
-                    .map(
-                    path -> (Callable<AnalysisResult>) () -> {
-                        boolean isEmpty = analyzer.isEmptyJavaFile(path);
-                        return new AnalysisResult(path, isEmpty);
-                    }).collect(Collectors.toList()))
-                    .forEach(result -> {
-                        if (result.isDone()) {
-                            try {
-                                var analysisResult = result.get();
-                                if (analysisResult.isEmpty()) {
-                                    emptyJavaSourceFiles.add(analysisResult.path());
+                                .filter(path -> {
+                                    String fileName = null;
+                                    if (path.getFileName() != null) {
+                                        fileName = path.getFileName().toString();
+                                    }
+                                    return fileName != null
+                                            && !fileName.equals("package-info.java")
+                                            && !fileName.equals("module-info.java");
+                                })
+                                .map(path -> (Callable<AnalysisResult>) () -> {
+                                    boolean isEmpty = analyzer.isEmptyJavaFile(path);
+                                    return new AnalysisResult(path, isEmpty);
+                                })
+                                .collect(Collectors.toList()))
+                        .forEach(result -> {
+                            if (result.isDone()) {
+                                try {
+                                    var analysisResult = result.get();
+                                    if (analysisResult.isEmpty()) {
+                                        emptyJavaSourceFiles.add(analysisResult.path());
+                                    }
+                                } catch (ExecutionException e) {
+                                    LOGGER.error("Task encountered exception: ", e.getCause());
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
                                 }
-                            } catch (ExecutionException e) {
-                                LOGGER.error("Task encountered exception: ", e.getCause());
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
                             }
-                        }
-                    });
+                        });
                 long endTime = System.currentTimeMillis();
                 LOGGER.info("Finished in {}ms", endTime - startTime);
             } catch (IOException e) {
@@ -132,7 +138,12 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
         if (!emptyJavaSourceFiles.isEmpty()) {
             StringBuilder sb = new StringBuilder("Empty Java source files found:\n");
             for (Path path : emptyJavaSourceFiles) {
-                sb.append("\t- ").append(session.getTopLevelProject().getBasedir().toPath().relativize(path)).append("\n");
+                sb.append("\t- ")
+                        .append(session.getTopLevelProject()
+                                .getBasedir()
+                                .toPath()
+                                .relativize(path))
+                        .append("\n");
             }
             throw new EnforcerRuleException(sb.toString());
         }
@@ -142,25 +153,25 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
         private final Path path;
         private final boolean isEmpty;
 
-        AnalysisResult(
-            Path path,
-            boolean isEmpty
-        ) {
+        AnalysisResult(Path path, boolean isEmpty) {
             this.path = path;
             this.isEmpty = isEmpty;
         }
 
-        public Path path() {return path;}
+        public Path path() {
+            return path;
+        }
 
-        public boolean isEmpty() {return isEmpty;}
+        public boolean isEmpty() {
+            return isEmpty;
+        }
 
         @Override
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj == null || obj.getClass() != this.getClass()) return false;
             var that = (AnalysisResult) obj;
-            return Objects.equals(this.path, that.path) &&
-                this.isEmpty == that.isEmpty;
+            return Objects.equals(this.path, that.path) && this.isEmpty == that.isEmpty;
         }
 
         @Override
@@ -170,9 +181,7 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule  {
 
         @Override
         public String toString() {
-            return "AnalysisResult[" +
-                "path=" + path + ", " +
-                "isEmpty=" + isEmpty + ']';
+            return "AnalysisResult[" + "path=" + path + ", " + "isEmpty=" + isEmpty + ']';
         }
     }
 }
