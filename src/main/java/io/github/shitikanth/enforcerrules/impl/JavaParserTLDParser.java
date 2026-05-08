@@ -9,10 +9,10 @@ import java.util.List;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaParserAdapter;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
 import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 
 class JavaParserTLDParser extends AbstractTLDParser {
     private final JavaParserAdapter parser;
@@ -23,18 +23,21 @@ class JavaParserTLDParser extends AbstractTLDParser {
     }
 
     @Override
-    public List<String> parse() {
-        CompilationUnit compilationUnit = null;
+    public CompilationUnitInfo parse() {
+        com.github.javaparser.ast.CompilationUnit compilationUnit;
         try (BufferedReader reader = this.getReader()) {
             compilationUnit = parser.parse(reader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        List<TypeDeclaration<?>> typeDeclarations = compilationUnit.getTypes();
-        List<String> result = new ArrayList<>();
-        for (TypeDeclaration<?> typeDeclaration : typeDeclarations) {
-            result.add(typeDeclaration.getNameAsString());
+        String packageName = compilationUnit
+                .getPackageDeclaration()
+                .map(pd -> pd.getNameAsString())
+                .orElse(null);
+        List<String> typeNames = new ArrayList<>();
+        for (TypeDeclaration<?> typeDeclaration : compilationUnit.getTypes()) {
+            typeNames.add(typeDeclaration.getNameAsString());
         }
-        return result;
+        return new CompilationUnitInfo(packageName, typeNames);
     }
 }

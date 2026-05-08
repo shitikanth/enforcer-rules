@@ -1,6 +1,8 @@
 grammar JavaTLD;
 
-compilationUnit : (typeDeclaration | .)* ;
+compilationUnit : packageDeclaration? (typeDeclaration | .)* ;
+
+packageDeclaration : PACKAGE ID ('.' ID)* ';' ;
 
 typeDeclaration : ('class'|'interface'|'enum'|'@interface'|'record') ID .*? block ;
 
@@ -11,6 +13,8 @@ WS : [ \r\t\n]+ -> skip ;
 COMMENT      : '/*' .*? '*/'    -> skip;
 
 LINE_COMMENT : '//' ~[\r\n]*    -> skip;
+
+PACKAGE : 'package' ;
 
 ID : [a-zA-Z$_] [a-zA-Z$_0-9]* ;
 

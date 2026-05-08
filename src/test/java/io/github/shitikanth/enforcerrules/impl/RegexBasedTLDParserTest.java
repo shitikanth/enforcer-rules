@@ -1,28 +1,38 @@
 package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegexBasedTLDParserTest {
 
-    @BeforeEach
-    void setUp() {}
+    private CompilationUnitInfo parse(String source) {
+        return new RegexBasedTLDParser(new BufferedReader(new StringReader(source))).parse();
+    }
 
     @Test
-    void example() {
-        InputStream inputStream = getClass().getResourceAsStream("/examples/Examples.java");
-        if (inputStream == null) {
-            fail("Could not open test resource");
-        }
-        var bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        RegexBasedTLDParser parser = new RegexBasedTLDParser(bufferedReader);
-        var types = parser.parse();
-        System.out.println(types);
+    void capturesPackageName() {
+        var info = parse("package com.example;\npublic class Foo {}");
+        assertEquals("com.example", info.packageName());
+        assertTrue(info.typeNames().contains("Foo"));
+    }
+
+    @Test
+    void noPackage_returnsNull() {
+        var info = parse("public class Foo {}");
+        assertNull(info.packageName());
+    }
+
+    @Test
+    void multipleTypes() {
+        var info = parse("package org.example;\npublic class A {}\npublic interface B {}");
+        assertEquals("org.example", info.packageName());
+        assertTrue(info.typeNames().contains("A"));
+        assertTrue(info.typeNames().contains("B"));
     }
 }

@@ -67,12 +67,10 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule {
         List<Path> compileSourceRoots = new ArrayList<>();
         List<Path> testCompileSourceRoots = new ArrayList<>();
         for (String s : project.getCompileSourceRoots()) {
-            Path path = Paths.get(s);
-            compileSourceRoots.add(path);
+            compileSourceRoots.add(Paths.get(s));
         }
         for (String s : project.getTestCompileSourceRoots()) {
-            Path path = Paths.get(s);
-            testCompileSourceRoots.add(path);
+            testCompileSourceRoots.add(Paths.get(s));
         }
         analyzeSourceRoots(compileSourceRoots);
         analyzeSourceRoots(testCompileSourceRoots);
@@ -80,6 +78,7 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule {
 
     private void analyzeSourceRoots(List<Path> sourceRoots) throws EnforcerRuleException {
         List<Path> emptyJavaSourceFiles = new ArrayList<>();
+        List<AnalysisResult> wrongPackageResults = new ArrayList<>();
         EmptyJavaFileAnalyzer analyzer = new EmptyJavaFileAnalyzer(TLDParserFactories.getParserFactory(parserId));
         for (Path sourceRoot : sourceRoots) {
             LOGGER.debug("Analyzing source root {}", sourceRoot);
@@ -107,16 +106,24 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule {
                                             && !fileName.equals("module-info.java");
                                 })
                                 .map(path -> (Callable<AnalysisResult>) () -> {
-                                    boolean isEmpty = analyzer.isEmptyJavaFile(path);
-                                    return new AnalysisResult(path, isEmpty);
+                                    var result = analyzer.analyze(path, sourceRoot);
+                                    return new AnalysisResult(
+                                            path,
+                                            result.isEmpty(),
+                                            result.hasWrongPackage(),
+                                            result.expectedPackage(),
+                                            result.actualPackage());
                                 })
                                 .collect(Collectors.toList()))
-                        .forEach(result -> {
-                            if (result.isDone()) {
+                        .forEach(future -> {
+                            if (future.isDone()) {
                                 try {
-                                    var analysisResult = result.get();
-                                    if (analysisResult.isEmpty()) {
-                                        emptyJavaSourceFiles.add(analysisResult.path());
+                                    var result = future.get();
+                                    if (result.isEmpty()) {
+                                        emptyJavaSourceFiles.add(result.path());
+                                    }
+                                    if (result.hasWrongPackage()) {
+                                        wrongPackageResults.add(result);
                                     }
                                 } catch (ExecutionException e) {
                                     LOGGER.error("Task encountered exception: ", e.getCause());
@@ -135,8 +142,9 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule {
             }
         }
 
+        StringBuilder sb = new StringBuilder();
         if (!emptyJavaSourceFiles.isEmpty()) {
-            StringBuilder sb = new StringBuilder("Empty Java source files found:\n");
+            sb.append("Empty Java source files found:\n");
             for (Path path : emptyJavaSourceFiles) {
                 sb.append("\t- ")
                         .append(session.getTopLevelProject()
@@ -145,6 +153,22 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule {
                                 .relativize(path))
                         .append("\n");
             }
+        }
+        if (!wrongPackageResults.isEmpty()) {
+            sb.append("Java files with incorrect package declaration:\n");
+            for (AnalysisResult result : wrongPackageResults) {
+                Path relativePath =
+                        session.getTopLevelProject().getBasedir().toPath().relativize(result.path());
+                sb.append("\t- ")
+                        .append(relativePath)
+                        .append(" (expected: ")
+                        .append(result.expectedPackage())
+                        .append(", found: ")
+                        .append(result.actualPackage())
+                        .append(")\n");
+            }
+        }
+        if (sb.length() > 0) {
             throw new EnforcerRuleException(sb.toString());
         }
     }
@@ -152,10 +176,17 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule {
     static final class AnalysisResult {
         private final Path path;
         private final boolean isEmpty;
+        private final boolean hasWrongPackage;
+        private final String expectedPackage;
+        private final String actualPackage;
 
-        AnalysisResult(Path path, boolean isEmpty) {
+        AnalysisResult(
+                Path path, boolean isEmpty, boolean hasWrongPackage, String expectedPackage, String actualPackage) {
             this.path = path;
             this.isEmpty = isEmpty;
+            this.hasWrongPackage = hasWrongPackage;
+            this.expectedPackage = expectedPackage;
+            this.actualPackage = actualPackage;
         }
 
         public Path path() {
@@ -166,22 +197,39 @@ class BanEmptyJavaFiles extends AbstractEnforcerRule {
             return isEmpty;
         }
 
+        public boolean hasWrongPackage() {
+            return hasWrongPackage;
+        }
+
+        public String expectedPackage() {
+            return expectedPackage;
+        }
+
+        public String actualPackage() {
+            return actualPackage;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj == null || obj.getClass() != this.getClass()) return false;
             var that = (AnalysisResult) obj;
-            return Objects.equals(this.path, that.path) && this.isEmpty == that.isEmpty;
+            return Objects.equals(this.path, that.path)
+                    && this.isEmpty == that.isEmpty
+                    && this.hasWrongPackage == that.hasWrongPackage
+                    && Objects.equals(this.expectedPackage, that.expectedPackage)
+                    && Objects.equals(this.actualPackage, that.actualPackage);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(path, isEmpty);
+            return Objects.hash(path, isEmpty, hasWrongPackage, expectedPackage, actualPackage);
         }
 
         @Override
         public String toString() {
-            return "AnalysisResult[" + "path=" + path + ", " + "isEmpty=" + isEmpty + ']';
+            return "AnalysisResult[path=" + path + ", isEmpty=" + isEmpty + ", hasWrongPackage=" + hasWrongPackage
+                    + ']';
         }
     }
 }

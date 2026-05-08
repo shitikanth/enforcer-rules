@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 
 class RecursiveDescentTLDParser extends AbstractTLDParser {
     static final Logger LOGGER = LoggerFactory.getLogger(RecursiveDescentTLDParser.class);
@@ -24,6 +25,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
     private int start = 0;
     private int pos = 0;
     private final List<String> collector = new ArrayList<>();
+    private String packageName = null;
 
     public RecursiveDescentTLDParser(Path path) {
         super(path);
@@ -34,7 +36,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
     }
 
     @Override
-    public List<String> parse() {
+    public CompilationUnitInfo parse() {
         String input;
         try {
             input = IOUtils.toString(getReader());
@@ -46,7 +48,7 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
         this.state = new InitialState();
 
         run();
-        return collector;
+        return new CompilationUnitInfo(packageName, List.copyOf(collector));
     }
 
     private void run() {
@@ -155,8 +157,10 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
                     return new LineCommentState(this);
                 } else if (lookingAt("/*")) {
                     return new BlockCommentState(this);
-                } else if (lookingAt("package") || lookingAt("import")) {
-                    return new PackageOrImportState();
+                } else if (lookingAt("package")) {
+                    return new PackageDeclarationState();
+                } else if (lookingAt("import")) {
+                    return new SkipToSemicolonState(this);
                 } else if (lookingAt(classKeyword)) {
                     return new TypeDeclarationState();
                 } else {
@@ -167,13 +171,37 @@ class RecursiveDescentTLDParser extends AbstractTLDParser {
         }
     }
 
-    class PackageOrImportState implements State {
+    class PackageDeclarationState implements State {
         @Nullable
         @Override
         public State runState() {
-            LOGGER.debug("package or import");
-            skipUntil(';');
+            LOGGER.debug("package declaration");
+            skipWs();
+            int pkgStart = pos;
+            while (!eof() && peek() != ';') {
+                next();
+            }
+            String pkg = input.substring(pkgStart, pos).stripTrailing();
+            packageName = pkg.isEmpty() ? null : pkg;
+            if (!eof()) next(); // consume ';'
+            skip();
             return new InitialState();
+        }
+    }
+
+    class SkipToSemicolonState implements State {
+        private final State parent;
+
+        SkipToSemicolonState(State parent) {
+            this.parent = parent;
+        }
+
+        @Nullable
+        @Override
+        public State runState() {
+            LOGGER.debug("skip to semicolon");
+            skipUntil(';');
+            return parent;
         }
     }
 
