@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.List;
 
 public abstract class AbstractTLDParser implements TLDParser {
     private Path path;
@@ -34,5 +33,5 @@ public abstract class AbstractTLDParser implements TLDParser {
     }
 
     @Override
-    public abstract List<String> parse();
+    public abstract CompilationUnitInfo parse();
 }

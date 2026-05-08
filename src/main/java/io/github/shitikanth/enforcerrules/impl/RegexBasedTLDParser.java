@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import com.google.common.annotations.VisibleForTesting;
 
 import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 
 class RegexBasedTLDParser extends AbstractTLDParser {
     private Pattern pattern = Pattern.compile(
@@ -26,16 +27,16 @@ class RegexBasedTLDParser extends AbstractTLDParser {
     }
 
     @Override
-    public List<String> parse() {
+    public CompilationUnitInfo parse() {
         try (var bufferedReader = getReader()) {
-            return parse(bufferedReader);
+            return new CompilationUnitInfo(null, parseTypes(bufferedReader));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     @VisibleForTesting
-    public List<String> parse(BufferedReader bufferedReader) {
+    public List<String> parseTypes(BufferedReader bufferedReader) {
         List<String> types = new ArrayList<>();
         bufferedReader.lines().forEach(line -> {
             Matcher matcher = pattern.matcher(line);

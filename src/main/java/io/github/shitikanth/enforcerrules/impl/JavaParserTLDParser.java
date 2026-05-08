@@ -9,10 +9,10 @@ import java.util.List;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.JavaParserAdapter;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
 import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 
 class JavaParserTLDParser extends AbstractTLDParser {
     private final JavaParserAdapter parser;
@@ -23,8 +23,8 @@ class JavaParserTLDParser extends AbstractTLDParser {
     }
 
     @Override
-    public List<String> parse() {
-        CompilationUnit compilationUnit = null;
+    public CompilationUnitInfo parse() {
+        com.github.javaparser.ast.CompilationUnit compilationUnit = null;
         try (BufferedReader reader = this.getReader()) {
             compilationUnit = parser.parse(reader);
         } catch (IOException e) {
@@ -35,6 +35,6 @@ class JavaParserTLDParser extends AbstractTLDParser {
         for (TypeDeclaration<?> typeDeclaration : typeDeclarations) {
             result.add(typeDeclaration.getNameAsString());
         }
-        return result;
+        return new CompilationUnitInfo(null, result);
     }
 }

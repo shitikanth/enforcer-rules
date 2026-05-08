@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import io.github.shitikanth.enforcerrules.AbstractTLDParser;
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 import io.github.shitikanth.enforcerrules.JavaTLDLexer;
 import io.github.shitikanth.enforcerrules.JavaTLDParser;
 
@@ -25,16 +26,16 @@ class AntlrTLDParser extends AbstractTLDParser {
     }
 
     @Override
-    public List<String> parse() {
+    public CompilationUnitInfo parse() {
         try (BufferedReader reader = this.getReader()) {
-            return parse(reader);
+            return new CompilationUnitInfo(null, parseTypes(reader));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     @VisibleForTesting
-    public List<String> parse(BufferedReader bufferedReader) throws IOException {
+    public List<String> parseTypes(BufferedReader bufferedReader) throws IOException {
         var lexer = new JavaTLDLexer(CharStreams.fromReader(bufferedReader));
         var parser = new JavaTLDParser(new CommonTokenStream(lexer));
         var compilationUnit = parser.compilationUnit();

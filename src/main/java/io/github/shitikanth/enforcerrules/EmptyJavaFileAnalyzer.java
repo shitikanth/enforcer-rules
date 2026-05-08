@@ -18,7 +18,7 @@ class EmptyJavaFileAnalyzer {
         LOGGER.debug("Analyzing: {}", path);
         String expectedTypeName = path.getFileName().toString().replace(".java", "");
         TLDParser parser = parserFactory.createTLDParser(path);
-        List<String> typeNames = parser.parse();
+        List<String> typeNames = parser.parse().typeNames();
         LOGGER.debug("Found types: {}", typeNames);
         return !typeNames.contains(expectedTypeName);
     }

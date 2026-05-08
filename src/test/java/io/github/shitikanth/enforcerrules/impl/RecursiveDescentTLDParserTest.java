@@ -1,35 +1,51 @@
 package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.StringReader;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class RecursiveDescentTLDParserTest {
-    @Test
-    void testExamples() {
-        InputStream inputStream = getClass().getResourceAsStream("/examples/Examples.java");
-        if (inputStream == null) {
-            fail("Could not open test resource");
-        }
-        var bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        var parser = new RecursiveDescentTLDParser(bufferedReader);
-        var types = parser.parse();
-        System.out.println(types);
+
+    private CompilationUnitInfo parse(String source) {
+        return new RecursiveDescentTLDParser(new BufferedReader(new StringReader(source))).parse();
     }
 
     @Test
-    @Disabled
-    void debugFile() {
-        String filename = "";
-        Path path = Paths.get(filename);
-        var types = new RecursiveDescentTLDParser(path).parse();
-        System.out.println(types);
+    void capturesPackageName() {
+        var info = parse("package com.example;\nclass Foo {}");
+        assertEquals("com.example", info.packageName());
+        assertEquals(java.util.List.of("Foo"), info.typeNames());
+    }
+
+    @Test
+    void noPackage_returnsNull() {
+        var info = parse("class Foo {}");
+        assertNull(info.packageName());
+        assertEquals(java.util.List.of("Foo"), info.typeNames());
+    }
+
+    @Test
+    void packageInBlockComment_isIgnored() {
+        var info = parse("/* package com.fake; */ class Foo {}");
+        assertNull(info.packageName());
+    }
+
+    @Test
+    void packageInLineComment_isIgnored() {
+        var info = parse("// package com.fake;\nclass Foo {}");
+        assertNull(info.packageName());
+    }
+
+    @Test
+    void multipleTypesWithPackage() {
+        var info = parse("package org.example;\nclass A {}\ninterface B {}");
+        assertEquals("org.example", info.packageName());
+        assertTrue(info.typeNames().contains("A"));
+        assertTrue(info.typeNames().contains("B"));
     }
 }
