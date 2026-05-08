@@ -1,26 +1,38 @@
 package io.github.shitikanth.enforcerrules.impl;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 
 import org.junit.jupiter.api.Test;
 
-import io.github.shitikanth.enforcerrules.TLDParser;
+import io.github.shitikanth.enforcerrules.CompilationUnitInfo;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AntlrTLDParserTest {
 
+    private CompilationUnitInfo parse(String source) {
+        return new AntlrTLDParser(new BufferedReader(new StringReader(source))).parse();
+    }
+
     @Test
-    void example1() throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream("/examples/Examples.java");
-        if (inputStream == null) {
-            fail("Could not open test resource");
-        }
-        TLDParser parser = new AntlrTLDParser(new BufferedReader(new InputStreamReader(inputStream)));
-        var types = parser.parse();
-        System.out.println(types);
+    void capturesPackageName() {
+        var info = parse("package com.example;\nclass Foo {}");
+        assertEquals("com.example", info.packageName());
+        assertTrue(info.typeNames().contains("Foo"));
+    }
+
+    @Test
+    void noPackage_returnsNull() {
+        var info = parse("class Foo {}");
+        assertNull(info.packageName());
+    }
+
+    @Test
+    void multipleTypes() {
+        var info = parse("package org.example;\nclass A {}\ninterface B {}");
+        assertEquals("org.example", info.packageName());
+        assertTrue(info.typeNames().contains("A"));
+        assertTrue(info.typeNames().contains("B"));
     }
 }
