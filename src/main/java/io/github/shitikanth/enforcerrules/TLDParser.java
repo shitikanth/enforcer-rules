@@ -1,13 +1,8 @@
 package io.github.shitikanth.enforcerrules;
 
-import java.util.List;
-
-/**
- * This interface represents a parser for top-level Java declarations.
- */
 public interface TLDParser {
     /**
-     * @return List of names of top-level types declared in the compilation unit.
+     * @return Parsed info: package name (null if absent) and top-level type names.
      */
-    List<String> parse();
+    CompilationUnitInfo parse();
 }
