@@ -24,17 +24,20 @@ class JavaParserTLDParser extends AbstractTLDParser {
 
     @Override
     public CompilationUnitInfo parse() {
-        com.github.javaparser.ast.CompilationUnit compilationUnit = null;
+        com.github.javaparser.ast.CompilationUnit compilationUnit;
         try (BufferedReader reader = this.getReader()) {
             compilationUnit = parser.parse(reader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        List<TypeDeclaration<?>> typeDeclarations = compilationUnit.getTypes();
-        List<String> result = new ArrayList<>();
-        for (TypeDeclaration<?> typeDeclaration : typeDeclarations) {
-            result.add(typeDeclaration.getNameAsString());
+        String packageName = compilationUnit
+                .getPackageDeclaration()
+                .map(pd -> pd.getNameAsString())
+                .orElse(null);
+        List<String> typeNames = new ArrayList<>();
+        for (TypeDeclaration<?> typeDeclaration : compilationUnit.getTypes()) {
+            typeNames.add(typeDeclaration.getNameAsString());
         }
-        return new CompilationUnitInfo(null, result);
+        return new CompilationUnitInfo(packageName, typeNames);
     }
 }
